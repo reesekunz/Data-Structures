@@ -28,7 +28,7 @@ class ListNode:
 
     """Rearranges this ListNode's previous and next pointers
     accordingly, effectively deleting this ListNode."""
-    def delete(self):
+    def delete(self): # Unlinking - changing the pointers before and after it to skip a node 
         if self.prev:
             self.prev.next = self.next
         if self.next:
@@ -51,8 +51,21 @@ class DoublyLinkedList:
     """Wraps the given value in a ListNode and inserts it 
     as the new head of the list. Don't forget to handle 
     the old head node's previous pointer accordingly."""
-    def add_to_head(self, value):
-        pass
+    def add_to_head(self, value): # Start with adding so you have something to work with 
+        new_node = ListNode(value, None, None)    
+        self.length += 1 # Adding to list so gets bigger
+        # If list is empty (no head or tail)
+        if not self.head and not self.tail:
+               self.head = new_node
+               self.tail = new_node     
+        # If head already exists (replace)
+        # Next and previous are the pointers 
+        # prev represents an earlier element in the list. since the head is the earliest element, previous to it is itself.
+        else: 
+            new_node.next = self.head 
+            self.head.prev = new_node
+            self.head = new_node
+    
 
     """Removes the List's current head node, making the
     current head's next node the new head of the List.
@@ -83,7 +96,7 @@ class DoublyLinkedList:
         pass
 
     """Removes a node from the list and handles cases where
-    the node was the head or the tail"""
+    the node was the head or the tail""" ## Deleting head and tail cases 
     def delete(self, node):
         pass
         
