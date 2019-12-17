@@ -1,0 +1,166 @@
+"""Each ListNode holds a reference to its previous node
+as well as its next node in the List."""
+
+
+class ListNode:
+    def __init__(self, value, prev=None, next=None):
+        self.value = value
+        self.prev = prev
+        self.next = next
+
+    """Wrap the given value in a ListNode and insert it
+    after this node. Note that this node could already
+    have a next node it is point to."""
+
+    def insert_after(self, value):
+        current_next = self.next
+        self.next = ListNode(value, self, current_next)
+        if current_next:
+            current_next.prev = self.next
+
+    """Wrap the given value in a ListNode and insert it
+    before this node. Note that this node could already
+    have a previous node it is point to."""
+
+    def insert_before(self, value):
+        current_prev = self.prev
+        self.prev = ListNode(value, current_prev, self)
+        if current_prev:
+            current_prev.next = self.prev
+
+    """Rearranges this ListNode's previous and next pointers
+    accordingly, effectively deleting this ListNode."""
+
+    def delete(self):  # Unlinking - changing the pointers before and after it to skip a node
+        if self.prev:
+            self.prev.next = self.next
+        if self.next:
+            self.next.prev = self.prev
+
+
+"""Our doubly-linked list class. It holds references to
+the list's head and tail nodes."""
+
+
+class DoublyLinkedList:
+    def __init__(self, node=None):
+        self.head = node
+        self.tail = node
+        self.length = 1 if node is not None else 0
+
+    def __len__(self):
+        return self.length
+
+    """Wraps the given value in a ListNode and inserts it
+    as the new head of the list. Don't forget to handle
+    the old head node's previous pointer accordingly."""
+
+    def add_to_head(self, value):  # Start with adding so you have something to work with
+        new_node = ListNode(value, None, None)
+        self.length += 1  # Adding to list so gets bigger
+        # If list is empty (no head or tail)
+        if not self.head and not self.tail:
+            self.head = new_node
+            self.tail = new_node
+        # If head already exists (replace)
+        # Next and previous are the pointers
+        # prev represents an earlier element in the list. since the head is the earliest element, previous to it is itself.
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+
+    """Removes the List's current head node, making the
+    current head's next node the new head of the List.
+    Returns the value of the removed Node."""
+
+    # dont have to remove 1 from length since already accounted for in delete function below
+    def remove_from_head(self):
+        value = self.head.value
+        self.delete(self.head)
+        return value
+
+    """Wraps the given value in a ListNode and inserts it
+    as the new tail of the list. Don't forget to handle
+    the old tail node's next pointer accordingly."""
+
+    def add_to_tail(self, value):  # Do this second - same as add to head but on other end
+        new_node = ListNode(value, None, None)
+        self.length += 1  # Adding to list so gets bigger
+        # If list is empty (no head or tail)
+        if not self.head and not self.tail:
+            self.head = new_node
+            self.tail = new_node
+        # If tail already exists (replace)
+        # Next and previous are the pointers
+        # prev represents an earlier element in the list. since the head is the earliest element, previous to it is itself.
+        # Just need to reverse these
+        else:
+            new_node.prev = self.tail  # Swap next to previous
+            self.tail.next = new_node
+            self.tail = new_node  # Update the tail to the new node
+
+    """Removes the List's current tail node, making the
+    current tail's previous node the new tail of the List.
+    Returns the value of the removed Node."""
+
+    def remove_from_tail(self):  # same as remove from head but with tail
+        value = self.tail.value
+        self.delete(self.tail)
+        return value
+
+    """Removes the input node from its current spot in the
+    List and inserts it as the new head node of the List."""
+
+    def move_to_front(self, node):
+        # if node is already self.node were gucci
+        if node is self.head:
+            return
+        # grab value
+        value = node.value
+        self.delete(node)
+        # git rid of old one, add new one to head
+        self.add_to_head(value)
+
+    """Removes the input node from its current spot in the
+    List and inserts it as the new tail node of the List."""
+
+    def move_to_end(self, node):
+        if node is self.tail:
+            return
+
+        value = node.value
+        self.delete(node)
+        self.add_to_tail(value)
+
+    """Removes a node from the list and handles cases where
+    the node was the head or the tail"""  # Deleting head and tail cases
+
+    def delete(self, node):
+        if not self.head and not self.tail:
+            # handle error
+            return
+        self.length -= 1  # removing length by 1 since deleting
+        if self.head == self.tail:  # can use == or is
+            self.head = None
+            self.tail = None
+        elif self.head is node:
+            self.head = node.next  # self.head is next in line
+            node.delete()  # delete head
+        elif self.tail is node:
+            self.tail = node.prev  # self.tail is previous in line
+            node.delete()  # delete tail
+        else:
+            node.delete()
+
+    """Returns the highest value currently in the list"""
+
+    def get_max(self):
+        current = self.head
+        max_value = current.value
+        # Use while loop if dont know when going to be done with the loop
+        while current is not None:
+            if current.value > max_value:  # Update max value
+                max_value = current.value
+            current = current.next  # Current becomes next in line
+        return max_value
