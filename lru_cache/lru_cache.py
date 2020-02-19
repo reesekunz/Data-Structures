@@ -13,12 +13,11 @@ class LRUCache:
     def __init__(self, limit=10):
         self.limit = limit  # max number of nodes
         self.size = 0  # current number of nodes its holding
-        # a doubly linked list that holds the key-value entires
-        # dont use dictionary to keep track of order cause dictionaries are unordered and changeable
+        # a doubly linked list that holds the key-value entires in correct order
         self.order = DoublyLinkedList()
-        # storage dictionary that provides access to every node stored in the cache
-        self.storage = {}
-        # print("self.storage", self.storage)
+        # storage dictionary that provides access to every node
+        self.storage = dict()  # same as {}
+        # Using two different data structures - DoublyLinkedList and Dictionary. Dictionaries are good for look up. DLL are good for insert and remove.
 
     """
     Retrieves the value associated with the given key. Also
@@ -27,24 +26,18 @@ class LRUCache:
     Returns the value associated with the key or None if the
     key-value pair doesn't exist in the cache.
     """
+# Defining head as Most Recently Used, tail as Least Recently Used
 
     def get(self, key):
+        # check to see if key exists in storage (dictionary)
         if key in self.storage:
+            # get value out of storage with key as the parameter
             node = self.storage[key]
-            print("node", node)
-            # moves to end, meaning its the most recently used
-            self.order.move_to_end(node)
-            return node.value
-            # This is already being done in move_to_end DLL
-            # return value if node is already at tail
-        #     if self.order.tail == node:
-        #         return node.value
-        #     else:
-        #         # move the key-value pair to the end of the order such that the pair is considered most-recently used.
-        #         self.order.delete(node)
-        #         self.order.add_to_tail(node)
-        #     # Retrieves the value associated with the given key
-        #         return node.value
+            # move value to head since it is now the most recently used
+            # self.order because we are accessing move_to_front Doubly Linked List function. pass in node to move to front.
+            self.order.move_to_front(node)
+            return node.value[1]
+        # key isnt in storage
         else:
             return None
 
@@ -60,22 +53,26 @@ class LRUCache:
     """
 
     def set(self, key, value):
-        # Check the length - if length is at limit, delete last
-        # Check to see if key is in cache - cache is combo of dictionary and linked list
+        # check if key is in cache already
         if key in self.storage:
-            # print("KEY IN STORAGE", key)
-            # print("STORAGE", self.storage)
+            # get node from self.storage with key as parameter
             node = self.storage[key]
             node.value = (key, value)
-            self.order.move_to_end(node)
+            # update position, its now the Most Recently Used (MRU) - move to front
+            self.order.move_to_front(node)
+            # key isnt in cache and needs to be added
             return
-        # If it is in the cache, move key to the front and update value
+
+            # cache is full - need to make room. same thing as above but just remove from head first.
         if self.size == self.limit:
+            # remove LRU (remove from tail since we defined head as Most Recently Used) from both DLL and dict
             del self.storage[self.order.tail.value[0]]
             self.order.remove_from_tail()
             self.size -= 1
-        # If not in the cache, add to the front of the cache
-        # Defining head as most recent, tail as oldest
+        # Adding to cache
+        # add value to head as MRU
         self.order.add_to_head((key, value))
+        # add to dictionary
         self.storage[key] = self.order.head
+        # update size
         self.size += 1
