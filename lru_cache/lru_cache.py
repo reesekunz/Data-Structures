@@ -46,7 +46,6 @@ class LRUCache:
         #     # Retrieves the value associated with the given key
         #         return node.value
         else:
-            # Returns None if the key-value pair doesn't exist in the cache.
             return None
 
     """
