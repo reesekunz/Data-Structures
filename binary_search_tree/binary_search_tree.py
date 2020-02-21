@@ -1,7 +1,7 @@
-# from dll_stack import Stack
-# from dll_queue import Queue
+from dll_stack import Stack
+from dll_queue import Queue
 import sys
-sys.path.append('../queue_and_stack')
+sys.path.append('./queue_and_stack')
 
 # stack, queues, linked lists are linear
 # trees, graphs, etc. are non linear
@@ -38,7 +38,6 @@ class BinarySearchTree:
 
     # Return True if the tree contains the value
     # False if it does not
-
     def contains(self, target):
         # BASE CASE
         # 1. target found
@@ -70,6 +69,15 @@ class BinarySearchTree:
         else:
             return self.value
 
+        # Iterative solution:
+        # runtime of O(n)
+
+        # cur = self
+        # # Right as far as you can go
+        # while self.right is not None:
+        #     cur = cur.right
+        # return cur.value
+
         # Call the function `cb` on the value of each node
         # You may use a recursive or iterative approach
 
@@ -78,12 +86,28 @@ class BinarySearchTree:
         # BASE CASE: left and right are both None
         # RECURSIVE CASE:
         # Go Left and Right all the way down the tree
-        # Go left
         if self.left is not None:
             self.left.for_each(cb)
         # Go right
         if self.right is not None:
             self.right.for_each(cb)
+# use two if statements because you want to run both - theyre independent conditions
+# BASE CASE: else both are none, stop recursion. dont need this since not returning anything
+    # def iterative_for_each(self, cb):
+    #     if self is None:
+    #         print("BST is empty")
+    #         return
+    #     # Root node:
+    #     cb(self.value) # call function on current node value
+    #     # add left child to stack (if exists)
+    #     # add right child to stack (if exists)
+
+    #     # All children of root node:
+    #     while len(stack) > 0: # still nodes left
+    #         # pop top_of_stack
+    #         #cb(top_of_stack)
+    #         # go left - if left child, push onto stack
+    #         # go right - if right child, push onto stack
 
         # DAY 2 Project -----------------------
 
@@ -91,22 +115,72 @@ class BinarySearchTree:
         # Hint:  Use a recursive, depth first traversal
 
     def in_order_print(self, node):
-        pass
+        # in order = left, root, right
+
+        # 1. Base Case: when do we stop? when we're at bottom of the tree
+        # node is None or node has no children
+        if node is None:
+            return
+
+        # 2. Recursive Case - how do we get to the bottom of the tree.
+        # go left (as far as possible)
+        self.in_order_print(node.left)
+        print(node.value)
+        # go right (as far as possible)
+        self.in_order_print(node.right)
 
     # Print the value of every node, starting with the given node,
     # in an iterative breadth first traversal
+
     def bft_print(self, node):
-        pass
+        # set up a QUEUE - FIFO. Queue represents the nodes we need to backtrack to.
+        # initialize with root node
+        q = Queue()
+        q.enqueue(node)
+
+        # while queue NOT empty
+        while q.len() > 0:
+            # dequeue node
+            current_node = q.dequeue().value
+            print("BFT current node value", current_node.value)
+            # print node.value
+            # print("BFT current node value", current_node.value)
+            # enqueue node.left
+            if current_node.left:
+                q.enqueue(current_node.left)
+            # enqueue node.right
+            if current_node.right:
+                q.enqueue(current_node.right)
 
     # Print the value of every node, starting with the given node,
     # in an iterative depth first traversal
+
     def dft_print(self, node):
-        pass
+        # set up a STACK - LIFO. Stack represents the nodes we need to backtrack to (haven't visited both children yet)
+        # initialize with root node
+        stack = Stack()
+        stack.push(node)
+
+        # while stack is NOT empty
+        while stack.len() > 0:
+            # pop node from stack
+            current_node = stack.pop().value
+            # print value
+            print("DFT current node value", node.value)
+            # push node.left
+            if current_node.left:
+                stack.push(current_node.left)
+            # push node.right
+            if current_node.right:
+                stack.push(current_node.right)
 
     # STRETCH Goals -------------------------
     # Note: Research may be required
 
+    # in_order a good reference
+
     # Print In-order recursive DFT
+
     def pre_order_dft(self, node):
         pass
 
